@@ -15,6 +15,7 @@ use Phergie\Irc\Bot\React\EventQueueInterface as Queue;
 use Phergie\Irc\Plugin\React\Command\CommandEvent as Event;
 use Phergie\Plugin\Http\Request as HttpRequest;
 use Chrismou\Phergie\Plugin\Weather\Provider\WeatherProviderInterface;
+use GuzzleHttp\Message\Response;
 
 /**
  * Plugin class.
@@ -107,8 +108,8 @@ class Plugin extends AbstractPlugin
         $self = $this;
         return new HttpRequest(array(
             'url' => $this->provider->getApiRequestUrl($event),
-            'resolveCallback' => function ($data) use ($self, $event, $queue) {
-                $self->sendIrcResponse($event, $queue, $this->provider->getSuccessLines($event, $data));
+            'resolveCallback' => function (Response $response) use ($self, $event, $queue) {
+                $self->sendIrcResponse($event, $queue, $this->provider->getSuccessLines($event, $response));
             },
             'rejectCallback' => function ($error) use ($self, $event, $queue) {
                 $self->sendIrcResponse($event, $queue, $this->provider->getRejectLines($event, $error));
