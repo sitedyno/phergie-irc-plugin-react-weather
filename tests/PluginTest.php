@@ -48,6 +48,7 @@ class PluginTest extends \PHPUnit_Framework_TestCase
         $this->event = $this->getMockEvent();
         $this->queue = $this->getMockQueue();
         $this->apiResponse = Phake::mock('GuzzleHttp\Message\Response');
+        $this->streamContents = Phake::mock('GuzzleHttp\Stream\StreamInterface');
     }
 
     /**
@@ -222,7 +223,15 @@ class PluginTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('callable', $callback);
 
-        Phake::when($this->apiResponse)->getBody()->thenReturn($data);
+        if ($data === "Foobar") {
+            $errorResponse = $this->apiResponse;
+            $this->apiResponse = Phake::mock('GuzzleHttp\Exception\ClientException');
+            Phake::when($this->apiResponse)->getResponse()->thenReturn($errorResponse);
+            Phake::when($errorResponse)->getBody()->thenReturn($this->streamContents);
+        } else {
+            Phake::when($this->apiResponse)->getBody()->thenReturn($this->streamContents);
+        }
+        Phake::when($this->streamContents)->getContents()->thenReturn($data);
         // Run the resolveCallback callback
         $callback($this->apiResponse, $this->event, $this->queue);
 

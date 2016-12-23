@@ -72,7 +72,7 @@ class Wunderground implements WeatherProviderInterface
      */
     public function getSuccessLines(Event $event, $apiResponse)
     {
-        $data = json_decode($apiResponse->getBody());
+        $data = json_decode($apiResponse);
         if (isset($data->current_observation)) {
             $data = $data->current_observation;
             return array(

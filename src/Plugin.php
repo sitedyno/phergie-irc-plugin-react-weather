@@ -110,10 +110,10 @@ class Plugin extends AbstractPlugin
         return new HttpRequest(array(
             'url' => $this->provider->getApiRequestUrl($event),
             'resolveCallback' => function (Response $response) use ($self, $event, $queue) {
-                $self->sendIrcResponse($event, $queue, $this->provider->getSuccessLines($event, $response->getBody()));
+                $self->sendIrcResponse($event, $queue, $this->provider->getSuccessLines($event, $response->getBody()->getContents()));
             },
             'rejectCallback' => function (ClientException $error) use ($self, $event, $queue) {
-                $self->sendIrcResponse($event, $queue, $this->provider->getRejectLines($event, $error->getResponse()->getBody()));
+                $self->sendIrcResponse($event, $queue, $this->provider->getRejectLines($event, $error->getResponse()->getBody()->getContents()));
             }
         ));
     }

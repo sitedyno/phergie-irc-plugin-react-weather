@@ -75,7 +75,7 @@ class OpenWeatherMap implements WeatherProviderInterface
      */
     public function getSuccessLines(Event $event, $apiResponse)
     {
-        $data = json_decode($apiResponse->getBody());
+        $data = json_decode($apiResponse);
         if (isset($data->name) && $data->name) {
             return array(
                 sprintf(
